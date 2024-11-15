@@ -1,0 +1,127 @@
+import axios from 'axios';
+import { useState } from 'react';
+import PopupForm from '@/components/PopupForm'; // Make sure this path is correct
+import '../../styles/globals.css'; // Importing the global CSS file
+
+export async function getStaticProps() {
+    try {
+        const res = await axios.get("http://localhost:5000/product");
+        const data = res.data;
+        console.log("Fetched data:", data);
+
+        if (!data || data.length === 0) {
+            return {
+                props: {
+                    products: [],
+                },
+            };
+        }
+
+        return {
+            props: {
+                products: data,
+            },
+        };
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return {
+            props: {
+                products: [],
+            },
+        };
+    }
+}
+
+export default function Dashboard({ products = [] }) {
+    const [productData, setProductData] = useState(products);
+    const [isPopupVisible, setPopupVisible] = useState(false);
+    const [currentProduct, setCurrentProduct] = useState(null);
+
+    const handleAddProduct = () => {
+        setCurrentProduct(null); // Reset form for new product
+        setPopupVisible(true);
+    };
+
+    const handleEditProduct = (product) => {
+        setCurrentProduct(product); // Load product data into form
+        setPopupVisible(true);
+    };
+
+    const handleDeleteProduct = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/product/${id}`);
+            console.log(`Deleted product with ID ${id}`);
+            setProductData(productData.filter(product => product.id !== id));
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    };
+
+    const closePopup = () => {
+        setPopupVisible(false);
+        setCurrentProduct(null);
+    };
+
+    const saveProduct = async (product) => {
+        console.log('Product to save:', product);
+        try {
+            if (currentProduct) {
+                console.log('Editing product with ID:', product.id);
+                await axios.patch(`http://localhost:5000/product/${product.id}`, product);
+            } else {
+                console.log('Adding new product');
+                const res = await axios.post("http://localhost:5000/product", product);
+                setProductData([...productData, res.data]); // Update local state with new product
+            }
+            closePopup();
+        } catch (error) {
+            console.error("Error saving product:", error);
+        }
+    };
+
+    return (
+        <div className="container">
+            <h1>ข้อมูลสินค้า</h1>
+            <button onClick={handleAddProduct} className="addButton">เพิ่มข้อมูล</button>
+            <table className="table" aria-label="Product Data">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ชื่อสินค้า</th>
+                        <th>RFID</th>
+                        <th>แก้ไข</th>
+                        <th>ลบ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {productData.length > 0 ? (
+                        productData.map(item => (
+                            <tr key={item.id}>
+                                <td>{item.id}</td>
+                                <td>{item.name}</td>
+                                <td>{item.rfid}</td>
+                                <td>
+                                    <button onClick={() => handleEditProduct(item)} className="editButton">แก้ไข</button>
+                                </td>
+                                <td>
+                                    <button onClick={() => handleDeleteProduct(item.id)} className="deleteButton">ลบ</button>
+                                </td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5">No product data available.</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+            {isPopupVisible && (
+                <PopupForm
+                    product={currentProduct}
+                    onClose={closePopup}
+                    onSave={saveProduct}
+                />
+            )}
+        </div>
+    );
+}
