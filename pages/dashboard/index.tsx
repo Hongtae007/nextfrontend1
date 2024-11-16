@@ -6,7 +6,7 @@ import '../../styles/globals.css'; // Importing the global CSS file
 export async function getStaticProps() {
     try {
         const res = await axios.get("http://localhost:5000/product");
-        const data = res.data;
+        let data = res.data;
         console.log("Fetched data:", data);
 
         if (!data || data.length === 0) {
@@ -16,6 +16,9 @@ export async function getStaticProps() {
                 },
             };
         }
+
+        // เรียงลำดับตาม id
+        data.sort((a, b) => a.id - b.id);
 
         return {
             props: {
@@ -32,8 +35,9 @@ export async function getStaticProps() {
     }
 }
 
+
 export default function Dashboard({ products = [] }) {
-    const [productData, setProductData] = useState(products);
+    const [productData, setProductData] = useState(products.sort((a, b) => a.id - b.id));
     const [isPopupVisible, setPopupVisible] = useState(false);
     const [currentProduct, setCurrentProduct] = useState(null);
 
@@ -71,7 +75,7 @@ export default function Dashboard({ products = [] }) {
             } else {
                 console.log('Adding new product');
                 const res = await axios.post("http://localhost:5000/product", product);
-                setProductData([...productData, res.data]); // Update local state with new product
+                setProductData([...productData, res.data]);
             }
             closePopup();
         } catch (error) {

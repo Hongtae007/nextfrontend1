@@ -22,9 +22,9 @@ const PopupForm = ({ product, onClose, onSave }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Convert rfid back to a number before saving
-        onSave({ ...formState, rfid: Number(formState.rfid) });
+        onSave({ ...formState, id: product ? product.id : undefined, rfid: Number(formState.rfid) });
     };
+
 
     return (
         <div className="popup">
