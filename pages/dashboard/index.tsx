@@ -5,7 +5,7 @@ import '../../styles/globals.css'; // Importing the global CSS file
 
 export async function getStaticProps() {
     try {
-        const res = await axios.get("http://localhost:5000/product");
+        const res = await axios.get("http://localhost:5001/product");
         let data = res.data;
         console.log("Fetched data:", data);
 
@@ -53,7 +53,7 @@ export default function Dashboard({ products = [] }) {
 
     const handleDeleteProduct = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/product/${id}`);
+            await axios.delete(`http://localhost:5001/product/${id}`);
             console.log(`Deleted product with ID ${id}`);
             setProductData(productData.filter(product => product.id !== id));
         } catch (error) {
@@ -71,10 +71,10 @@ export default function Dashboard({ products = [] }) {
         try {
             if (currentProduct) {
                 console.log('Editing product with ID:', product.id);
-                await axios.patch(`http://localhost:5000/product/${product.id}`, product);
+                await axios.patch(`http://localhost:5001/product/${product.id}`, product);
             } else {
                 console.log('Adding new product');
-                const res = await axios.post("http://localhost:5000/product", product);
+                const res = await axios.post("http://localhost:5001/product", product);
                 setProductData([...productData, res.data]);
             }
             closePopup();

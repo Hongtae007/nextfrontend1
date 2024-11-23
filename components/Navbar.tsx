@@ -1,14 +1,16 @@
 import Link from "next/link"
-import Image from "next/image"
 
 export default function Navbar() {
     return (
-        <nav>
-            <div>
+        <nav className="navbar">
+            <div className="logo">
                 <h1>RFID</h1>
             </div>
-            <Link href="/">Home Page</Link>
-            <Link href="/dashboard">Dashboard</Link>
+            <div className="links">
+                <Link href="/"> HomePage </Link>
+                <Link href="/dashboard"> Dashboard </Link>
+                <Link href="/login"> Login </Link>
+            </div>
         </nav>
-    )
+    );
 }
