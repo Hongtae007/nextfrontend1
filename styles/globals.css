@@ -119,3 +119,23 @@
 .footer p {
   margin: 0;
 }
+
+h1 {
+  font-size: 24px;
+}
+
+.addButton {
+  margin-bottom: 10px;
+}
+
+.searchBox {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.border {
+  border: 1px #ca2828;
+}

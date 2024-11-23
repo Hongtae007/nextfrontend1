@@ -30,10 +30,11 @@ const PopupForm = ({ product, onClose, onSave }) => {
         <div className="popup">
             <div className="popup-content">
                 <h2>{product ? 'แก้ไขสินค้า' : 'เพิ่มสินค้า'}</h2>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="border">
                     <label>
                         ชื่อสินค้า:
                         <input
+                            className="popup-content"
                             type="text"
                             name="name"
                             value={formState.name}
@@ -44,6 +45,7 @@ const PopupForm = ({ product, onClose, onSave }) => {
                     <label>
                         RFID:
                         <input
+                            className="popup-content"
                             type="number"
                             name="rfid"
                             value={formState.rfid}

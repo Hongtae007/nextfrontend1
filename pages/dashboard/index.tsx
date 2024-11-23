@@ -87,6 +87,17 @@ export default function Dashboard({ products = [] }) {
         <div className="container">
             <h1>ข้อมูลสินค้า</h1>
             <button onClick={handleAddProduct} className="addButton">เพิ่มข้อมูล</button>
+            {/* Search box placed below the Add button */}
+            <div style={{ marginTop: '10px' }}>
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    //value={searchQuery}
+                    //onChange={(e) => setSearchQuery(e.target.value)}
+                    className="searchBox"
+                />
+            </div>
+            {/* Table of products */}
             <table className="table" aria-label="Product Data">
                 <thead>
                     <tr>
@@ -119,6 +130,7 @@ export default function Dashboard({ products = [] }) {
                     )}
                 </tbody>
             </table>
+            {/* Popup form for adding/editing */}
             {isPopupVisible && (
                 <PopupForm
                     product={currentProduct}
@@ -128,4 +140,4 @@ export default function Dashboard({ products = [] }) {
             )}
         </div>
     );
-}
+}    
