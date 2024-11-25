@@ -35,7 +35,6 @@ export async function getStaticProps() {
     }
 }
 
-
 export default function Dashboard({ products = [] }) {
     const [productData, setProductData] = useState(products.sort((a, b) => a.id - b.id));
     const [isPopupVisible, setPopupVisible] = useState(false);
@@ -61,6 +60,17 @@ export default function Dashboard({ products = [] }) {
         }
     };
 
+    const handleSearch = async () => {
+        try {
+            const res = await axios.get(`http://localhost:5001/product/search`, {
+                params: { query: searchQuery },
+            });
+            setProductData(res.data); // อัปเดตข้อมูลใหม่
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+        }
+    };
+
     const closePopup = () => {
         setPopupVisible(false);
         setCurrentProduct(null);
@@ -83,6 +93,21 @@ export default function Dashboard({ products = [] }) {
         }
     };
 
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // Combined filtering logic
+    const filteredProducts = productData.filter(product => {
+        // Convert searchQuery to number (if it's a number)
+        const queryAsNumber = parseInt(searchQuery, 10);
+
+        // Check if searchQuery matches name, id, or rfid
+        return (
+            product.name.toLowerCase().includes(searchQuery.toLowerCase()) || // Search in name
+            (!isNaN(queryAsNumber) && product.id === queryAsNumber) ||        // Search in id
+            (!isNaN(queryAsNumber) && product.rfid === queryAsNumber)         // Search in rfid
+        );
+    });
+
     return (
         <div className="container">
             <h1>ข้อมูลสินค้า</h1>
@@ -92,8 +117,8 @@ export default function Dashboard({ products = [] }) {
                 <input
                     type="text"
                     placeholder="Search..."
-                    //value={searchQuery}
-                    //onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="searchBox"
                 />
             </div>
@@ -109,8 +134,8 @@ export default function Dashboard({ products = [] }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {productData.length > 0 ? (
-                        productData.map(item => (
+                    {filteredProducts.length > 0 ? (
+                        filteredProducts.map(item => (
                             <tr key={item.id}>
                                 <td>{item.id}</td>
                                 <td>{item.name}</td>
@@ -140,4 +165,4 @@ export default function Dashboard({ products = [] }) {
             )}
         </div>
     );
-}    
+}
